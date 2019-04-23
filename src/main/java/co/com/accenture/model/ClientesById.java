@@ -6,10 +6,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-@DynamoDBTable(tableName = "Clientes")
+@DynamoDBTable(tableName = "Movimientos")
 public class ClientesById {
 
-	@DynamoDBAttribute(attributeName = "Id")
+	@DynamoDBAttribute(attributeName = "IdMovimiento")
 	private String id;
 	
 	
@@ -22,7 +22,7 @@ public class ClientesById {
 	}
 
 	public ClientesById(Map<String, AttributeValue> item) {
-		this.id = item.get("Id") == null ? null : item.get("Id").getS();
+		this.id = item.get("IdMovimiento") == null ? null : item.get("IdMovimiento").getS();
 		
 	}
 

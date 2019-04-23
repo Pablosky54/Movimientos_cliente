@@ -29,7 +29,7 @@ public interface ClientesApi {
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @RequestMapping(value = "/clientes", produces = { "application/json" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/movimientos/guardar", produces = { "application/json" }, method = RequestMethod.POST)
     ResponseEntity<Respuesta> save(@RequestBody Clientes cliente);
 		
 
@@ -39,7 +39,7 @@ public interface ClientesApi {
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @RequestMapping(value = "/clientes", produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/movimientos/consultarcliente", produces = { "application/json" }, method = RequestMethod.GET)
     ResponseEntity<RespuestaConsulta> getAll();
 	
 	
@@ -49,7 +49,7 @@ public interface ClientesApi {
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @RequestMapping(value = "/clientesById", produces = { "application/json" }, method = RequestMethod.POST)
+    @RequestMapping(value = "/movimientos/consultar", produces = { "application/json" }, method = RequestMethod.POST)
     ResponseEntity<Clientes> postById(@RequestBody ClientesById id);
 
 
@@ -62,7 +62,7 @@ public interface ClientesApi {
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @RequestMapping(value = "/clientes", produces = { "application/json" }, method = RequestMethod.PUT)
+    @RequestMapping(value = "/movimientos/actualizar", produces = { "application/json" }, method = RequestMethod.PUT)
     ResponseEntity<RespuestaConsulta> update(@RequestBody Clientes clienteact);
 	
 	//eliminar datos
@@ -73,7 +73,7 @@ public interface ClientesApi {
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @RequestMapping(value = "/clientes", produces = { "application/json" }, method = RequestMethod.DELETE)
+    @RequestMapping(value = "/movimientos/eliminar", produces = { "application/json" }, method = RequestMethod.DELETE)
     ResponseEntity<RespuestaConsulta> delete(@RequestBody Clientes clientedel);
 	
 	

@@ -34,7 +34,7 @@ import co.com.accenture.model.ClientesById;
 public class ClientesRepository {
 
 	private final DynamoDBMapperConfig configs = new DynamoDBMapperConfig.Builder()
-			.withTableNameOverride(TableNameOverride.withTableNameReplacement("Clientes")).build();
+			.withTableNameOverride(TableNameOverride.withTableNameReplacement("Movimientos")).build();
 
 	private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
 			.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8081", "us-east-1"))
@@ -48,7 +48,7 @@ public class ClientesRepository {
 	}
 
 	public List<Clientes> getClientes() {
-		ScanRequest request = new ScanRequest("Clientes");
+		ScanRequest request = new ScanRequest("Movimientos");
 		return getClientes(client.scan(request).getItems()); 
 	}
 
@@ -70,10 +70,10 @@ public class ClientesRepository {
 	public Clientes consulta(ClientesById clienteId) {
 
 		Map<String, Condition> keyConditions = new HashMap<>();
-		keyConditions.put("Id", new Condition().withAttributeValueList(new AttributeValue(clienteId.getId()))
+		keyConditions.put("IdMovimiento", new Condition().withAttributeValueList(new AttributeValue(clienteId.getId()))
 				.withComparisonOperator(ComparisonOperator.EQ));
 
-		QueryRequest request = new QueryRequest("Clientes").withConsistentRead(true).withKeyConditions(keyConditions);
+		QueryRequest request = new QueryRequest("Movimientos").withConsistentRead(true).withKeyConditions(keyConditions);
 
 		QueryResult result = client.query(request);
 		List<Clientes> list = getClientes(result.getItems());
@@ -91,14 +91,14 @@ public class ClientesRepository {
 	public void elimina(Clientes clientedel) {
 		DynamoDB dynamoDB = new DynamoDB(client);
 
-		Table table = dynamoDB.getTable("Clientes");
+		Table table = dynamoDB.getTable("Movimientos");
 
-		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", clientedel.getId());
+		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", clientedel.getId());
 
 		try {
 			System.out.println("Updating the item...");
 			UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
-			DeleteItemSpec deleteSpec = new DeleteItemSpec().withPrimaryKey("Id", clientedel.getId());
+			DeleteItemSpec deleteSpec = new DeleteItemSpec().withPrimaryKey("IdMovimiento", clientedel.getId());
 			AttributeValue item = new AttributeValue();
 			table.deleteItem(deleteSpec).getDeleteItemResult().addAttributesEntry(clientedel.getId(), item);
 			System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
@@ -112,18 +112,17 @@ public class ClientesRepository {
 	public void actualizar(Clientes clienteact) {
 		DynamoDB dynamoDB = new DynamoDB(client);
 
-		Table table = dynamoDB.getTable("Clientes");
+		Table table = dynamoDB.getTable("Movimientos");
 
 		// String id = "000ecc62-f2d9-4b87-94b3-a4c65e698bbe";
 
-		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("Id", clienteact.getId())
+		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", clienteact.getId())
 				.withUpdateExpression(
-						"set Nombres = :n, Apellidos=:a,Telefono=:t,Celular=:cel,Direccion=:d,Genero=:g, Ciudad=:c,Empresa=:e")
-				.withValueMap(new ValueMap().withString(":n", clienteact.getNombres())
-						.withString(":a", clienteact.getApellidos()).withString(":c", clienteact.getCiudad())
-						.withString(":t", clienteact.getTelefono()).withString(":cel", clienteact.getCelular())
-						.withString(":d", clienteact.getDireccion()).withString(":g", clienteact.getGenero())
-						.withString(":e", clienteact.getEmpresa()))
+						"set Productos = :p, TipoId=:t,IdCliente=:c")
+				.withValueMap(new ValueMap().withString(":p", clienteact.getProducto())
+						.withString(":t", clienteact.getTipoId())
+						.withString(":c", clienteact.getIdCliente())
+						)
 				.withReturnValues(ReturnValue.UPDATED_NEW);
 
 		try {
