@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
+apply plugin: 'maven'
+apply plugin: "io.spring.dependency-management"
+apply plugin: 'jacoco'
+
+
+buildscript {
+	ext {
+		springBootVersion = '2.0.4.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.4.RELEASE")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
+	}
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+	baseName = 'POC-DEMO'
+	version =  'develop.20180709.1'
+}
+
+
+repositories {
+		mavenCentral()
+        maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.0.4.RELEASE'
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version:'2.7.0'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.7.0'
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.8'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.4.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version:'1.11.404'
+    implementation group: 'com.github.derjust', name: 'spring-data-dynamodb', version: '5.0.3'
+}
+
+task buildDocker(type: Docker, dependsOn: [build]) {
+    push = false
+    applicationName = jar.baseName
+    dockerfile = file('Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled true
+    }
+}
