@@ -4,17 +4,17 @@ import java.util.List;
 
 public class RespuestaConsulta {
 
-	private List<Clientes> clientes;
+	private List<Movimientos> clientes;
 
-	public RespuestaConsulta(List<Clientes> clientes) {
+	public RespuestaConsulta(List<Movimientos> clientes) {
 		this.clientes = clientes;
 	}
 
-	public List<Clientes> getClientes() {
+	public List<Movimientos> getClientes() {
 		return clientes;
 	}
 
-	public void setClientes(List<Clientes> clientes) {
+	public void setClientes(List<Movimientos> clientes) {
 		this.clientes = clientes;
 	}
 	

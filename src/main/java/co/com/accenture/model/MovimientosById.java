@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 @DynamoDBTable(tableName = "Movimientos")
-public class ClientesById {
+public class MovimientosById {
 
 	@DynamoDBAttribute(attributeName = "IdMovimiento")
 	private String id;
@@ -21,12 +21,12 @@ public class ClientesById {
 		this.id = id;
 	}
 
-	public ClientesById(Map<String, AttributeValue> item) {
+	public MovimientosById(Map<String, AttributeValue> item) {
 		this.id = item.get("IdMovimiento") == null ? null : item.get("IdMovimiento").getS();
 		
 	}
 
-	public ClientesById() {
+	public MovimientosById() {
 		super();
 		
 	}

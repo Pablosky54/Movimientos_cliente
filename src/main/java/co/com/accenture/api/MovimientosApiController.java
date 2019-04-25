@@ -11,15 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import co.com.accenture.model.Clientes;
-import co.com.accenture.model.ClientesById;
+import co.com.accenture.model.Movimientos;
+import co.com.accenture.model.MovimientosByFecha;
+import co.com.accenture.model.MovimientosById;
 import co.com.accenture.model.Respuesta;
 import co.com.accenture.model.RespuestaConsulta;
-import co.com.accenture.repository.ClientesRepository;
+import co.com.accenture.repository.MovimientosRepository;
 
 @Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-07-10T10:48:28.371-05:00")
 @RestController
-public class ClientesApiController implements ClientesApi {
+public class MovimientosApiController implements MovimientosApi {
 
 	@SuppressWarnings("unused")
 	private final ObjectMapper objectMapper;
@@ -27,18 +28,23 @@ public class ClientesApiController implements ClientesApi {
 	private final HttpServletRequest request;
 
 	@Autowired
-	private ClientesRepository repository; 
+	private MovimientosRepository repository; 
 
 	@Autowired
-	private ClientesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+	private MovimientosApiController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
 		this.request = request;
 	}
 
 	@Override
-	public ResponseEntity<Respuesta> save(@RequestBody Clientes cliente) {
+	public ResponseEntity<Respuesta> save(@RequestBody Movimientos cliente) {
 		repository.save(cliente);
 		return new ResponseEntity<Respuesta>(new Respuesta("200"), HttpStatus.OK);
+	}
+	
+	@Override
+	public ResponseEntity<Respuesta> validate(@RequestBody MovimientosById id) {		
+		return new ResponseEntity<Respuesta>(new Respuesta(repository.valida(id)), HttpStatus.OK);
 	}
 
 	@Override
@@ -47,20 +53,25 @@ public class ClientesApiController implements ClientesApi {
 	}
 
 	@Override
-	public ResponseEntity<RespuestaConsulta> update(@RequestBody Clientes clienteact) {
+	public ResponseEntity<RespuestaConsulta> update(@RequestBody Movimientos clienteact) {
 		repository.actualizar(clienteact);
 		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.getClientes()), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<RespuestaConsulta> delete(@RequestBody Clientes clientedel) {
+	public ResponseEntity<RespuestaConsulta> delete(@RequestBody Movimientos clientedel) {
 		repository.elimina(clientedel);
 		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.getClientes()), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<Clientes> postById(@RequestBody ClientesById clienteId) {
-		return new ResponseEntity<Clientes>(repository.consulta(clienteId), HttpStatus.OK);
+	public ResponseEntity<Movimientos> postById(@RequestBody MovimientosById clienteId) {
+		return new ResponseEntity<Movimientos>(repository.consulta(clienteId), HttpStatus.OK);
+	}
+	
+	@Override
+	public ResponseEntity<Movimientos> postByFecha(@RequestBody MovimientosByFecha fecha) {
+		return new ResponseEntity<Movimientos>(repository.consultaFecha(fecha), HttpStatus.OK);
 	}
 
 }

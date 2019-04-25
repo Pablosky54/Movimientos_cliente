@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import co.com.accenture.model.Clientes;
-import co.com.accenture.model.ClientesById;
+import co.com.accenture.model.Movimientos;
+import co.com.accenture.model.MovimientosByFecha;
+import co.com.accenture.model.MovimientosById;
 import co.com.accenture.model.Respuesta;
 import co.com.accenture.model.RespuestaConsulta;
 import io.swagger.annotations.Api;
@@ -21,7 +22,7 @@ import io.swagger.annotations.ApiResponses;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-07-10T10:48:28.371-05:00")
 @Api(value = "log", description = "the data API")
-public interface ClientesApi {
+public interface MovimientosApi {
 
 	@ApiOperation(value = "", nickname = "", notes = "")
     @ApiResponses(value = {
@@ -30,7 +31,16 @@ public interface ClientesApi {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @RequestMapping(value = "/movimientos/guardar", produces = { "application/json" }, method = RequestMethod.POST)
-    ResponseEntity<Respuesta> save(@RequestBody Clientes cliente);
+    ResponseEntity<Respuesta> save(@RequestBody Movimientos cliente);
+	
+	@ApiOperation(value = "", nickname = "", notes = "")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful operation", response = Respuesta.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @RequestMapping(value = "/movimientos/validar", produces = { "application/json" }, method = RequestMethod.GET)
+    ResponseEntity<Respuesta> validate(@RequestBody MovimientosById id);
 		
 
 	@ApiOperation(value = "", nickname = "", notes = "")
@@ -45,12 +55,25 @@ public interface ClientesApi {
 	
 	@ApiOperation(value = "", nickname = "", notes = "")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful operation", response = Clientes.class),
+            @ApiResponse(code = 200, message = "Successful operation", response = Movimientos.class),
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @RequestMapping(value = "/movimientos/consultar", produces = { "application/json" }, method = RequestMethod.POST)
-    ResponseEntity<Clientes> postById(@RequestBody ClientesById id);
+    ResponseEntity<Movimientos> postById(@RequestBody MovimientosById id);
+	
+	
+	
+	@ApiOperation(value = "", nickname = "", notes = "")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful operation", response = Movimientos.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+	@RequestMapping(value = "/movimientos/consultarfecha", produces = { "application/json" }, method = RequestMethod.POST)
+    ResponseEntity<Movimientos> postByFecha(@RequestBody MovimientosByFecha fecha); 
+	
+	
 
 
 
@@ -63,7 +86,7 @@ public interface ClientesApi {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @RequestMapping(value = "/movimientos/actualizar", produces = { "application/json" }, method = RequestMethod.PUT)
-    ResponseEntity<RespuestaConsulta> update(@RequestBody Clientes clienteact);
+    ResponseEntity<RespuestaConsulta> update(@RequestBody Movimientos clienteact);
 	
 	//eliminar datos
 	
@@ -74,7 +97,7 @@ public interface ClientesApi {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @RequestMapping(value = "/movimientos/eliminar", produces = { "application/json" }, method = RequestMethod.DELETE)
-    ResponseEntity<RespuestaConsulta> delete(@RequestBody Clientes clientedel);
+    ResponseEntity<RespuestaConsulta> delete(@RequestBody Movimientos clientedel);
 	
 	
 }
