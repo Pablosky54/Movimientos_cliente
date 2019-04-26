@@ -91,30 +91,35 @@ public class MovimientosRepository {
 
 	}
 
-	public Movimientos consultaFecha(MovimientosByFecha clienteFecha) {
+	public List<Movimientos> consultaFecha(MovimientosByFecha clienteFecha) {
 
-		Map<String, Object> expressionAttributeValues = new ValueMap();
-		expressionAttributeValues.put("IdCliente", new AttributeValue(clienteFecha.getIdCliente()));
-		// .withComparisonOperator(ComparisonOperator.EQ));
+		List<Map<String, AttributeValue>> items = new ArrayList<>();
+		Map<String, String> expressionAttributesNames = new HashMap<>();
 
-		QueryRequest request = new QueryRequest("Movimientos").withConsistentRead(true);
-		// .withExpressionAttributeNames(expressionAttributesNames)
-		// .withExpressionAttributeValues(expressionAttributeValues);
+		expressionAttributesNames.put("#Fecha", "Fecha");
+		Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
 
-		QueryResult result = client.query(request);
-		List<Movimientos> list = getClientes(result.getItems());
+		expressionAttributeValues.put(":Fecha", new AttributeValue().withS(clienteFecha.getFecha()));
+		QueryRequest queryRequest = new QueryRequest().withTableName("Movimientos")
+				.withKeyConditionExpression("#Fecha = :Fecha ").withIndexName("Fecha-index")
+				.withExpressionAttributeNames(expressionAttributesNames)
+				.withExpressionAttributeValues(expressionAttributeValues);
+		QueryResult queryResult = client.query(queryRequest);
+		List<Movimientos> list = getClientes(queryResult.getItems());
 
-		System.out.println(result.getItems().toString());
+		System.out.println(queryResult.getItems().toString());
+
 		if (list.isEmpty()) {
 			return null;
 		} else {
-			return list.get(0);
+
+			return list;
 
 		}
 
 	}
 
-	public void elimina(Movimientos clientedel) {
+	public void elimina(MovimientosById clientedel) {
 		DynamoDB dynamoDB = new DynamoDB(client);
 
 		Table table = dynamoDB.getTable("Movimientos");
@@ -161,84 +166,6 @@ public class MovimientosRepository {
 
 	}
 
-	public String valida(MovimientosById id) {
-
-		Map<String, Condition> keyConditions = new HashMap<>();
-		keyConditions.put("IdMovimiento", new Condition().withAttributeValueList(new AttributeValue(id.getId()))
-				.withComparisonOperator(ComparisonOperator.EQ));
-
-		QueryRequest request = new QueryRequest("Movimientos").withConsistentRead(true)
-				.withKeyConditions(keyConditions);
-
-		QueryResult result = client.query(request);
-		List<Movimientos> list = getClientes(result.getItems());
-
-		String consulta = new String();
-		consulta = result.getItems().toString();
-
-		System.out.println(result.getItems().toString());
-
-		if (list.isEmpty()) {
-			return "No existe, ID=" + id.getId().toString();
-		} else {
-			// se guardan los valores en un Array
-			ArrayList<String> movimiento = new ArrayList<>();
-			String validacion = "Exito";
-			int inicio = 0;
-			int fin = 0;
-			boolean entra = false;
-			boolean sale = false;
-
-			for (int i = 1; i <= consulta.length(); i++) {
-
-				if (String.valueOf(consulta).substring(i - 1, i).equals(":")) {
-					inicio = i;
-					entra = true;
-				}
-
-				if (String.valueOf(consulta).substring(i - 1, i).equals("}")) {
-					fin = i;
-					sale = true;
-				}
-
-				if (entra && sale) {
-					movimiento.add(String.valueOf(consulta).substring(inicio + 1, fin - 2));
-					inicio = fin = 0;
-					entra = sale = false;
-					System.out.println("arreglo:" + movimiento);
-				}
-			}
-
-			// se hacen las validaciones
-			if (movimiento.get(1) != null) {
-				System.out.println("idcliente no nulo");
-				if (movimiento.get(2) != null) {
-					System.out.println("fecha no nulo");
-					if (movimiento.get(4) != null) {
-						System.out.println("valor no nulo");
-						BigDecimal valor = new BigDecimal(movimiento.get(4));
-						BigDecimal val = valor;
-
-						if (valor.compareTo(val) > 1000) {
-							System.out.println("Valor mayor de mil");
-
-						}
-
-					} else {
-						validacion = "Valor nulo";
-					}
-				} else {
-					validacion = "Fecha nulo";
-				}
-
-			} else {
-				validacion = "Id cliente nulo";
-			}
-
-			return validacion;
-
-		}
-
-	}
+	
 
 }

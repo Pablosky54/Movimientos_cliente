@@ -5,6 +5,8 @@
  */
 package co.com.accenture.api;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,16 +37,6 @@ public interface MovimientosApi {
 	
 	@ApiOperation(value = "", nickname = "", notes = "")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful operation", response = Respuesta.class),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @RequestMapping(value = "/movimientos/validar", produces = { "application/json" }, method = RequestMethod.GET)
-    ResponseEntity<Respuesta> validate(@RequestBody MovimientosById id);
-		
-
-	@ApiOperation(value = "", nickname = "", notes = "")
-    @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful operation", response = RespuestaConsulta.class),
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 500, message = "Internal server error")
@@ -71,7 +63,7 @@ public interface MovimientosApi {
             @ApiResponse(code = 500, message = "Internal server error")
     })
 	@RequestMapping(value = "/movimientos/consultarfecha", produces = { "application/json" }, method = RequestMethod.POST)
-    ResponseEntity<Movimientos> postByFecha(@RequestBody MovimientosByFecha fecha); 
+	ResponseEntity<RespuestaConsulta> postByFecha(@RequestBody MovimientosByFecha fecha); 
 	
 	
 
@@ -97,7 +89,7 @@ public interface MovimientosApi {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @RequestMapping(value = "/movimientos/eliminar", produces = { "application/json" }, method = RequestMethod.DELETE)
-    ResponseEntity<RespuestaConsulta> delete(@RequestBody Movimientos clientedel);
+    ResponseEntity<Respuesta> delete(@RequestBody MovimientosById clientedel);
 	
 	
 }

@@ -1,7 +1,10 @@
 package co.com.accenture.api;
 
+import java.awt.List;
+
 import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,31 +40,26 @@ public class MovimientosApiController implements MovimientosApi {
 	}
 
 	@Override
-	public ResponseEntity<Respuesta> save(@RequestBody Movimientos cliente) {
+	public ResponseEntity<Respuesta> save(@Valid @RequestBody Movimientos cliente) {
 		repository.save(cliente);
 		return new ResponseEntity<Respuesta>(new Respuesta("200"), HttpStatus.OK);
 	}
 	
-	@Override
-	public ResponseEntity<Respuesta> validate(@RequestBody MovimientosById id) {		
-		return new ResponseEntity<Respuesta>(new Respuesta(repository.valida(id)), HttpStatus.OK);
-	}
-
 	@Override
 	public ResponseEntity<RespuestaConsulta> getAll() {
 		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.getClientes()), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<RespuestaConsulta> update(@RequestBody Movimientos clienteact) {
+	public ResponseEntity<RespuestaConsulta> update(@Valid @RequestBody Movimientos clienteact) {
 		repository.actualizar(clienteact);
 		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.getClientes()), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<RespuestaConsulta> delete(@RequestBody Movimientos clientedel) {
+	public ResponseEntity<Respuesta> delete(@RequestBody MovimientosById clientedel) {
 		repository.elimina(clientedel);
-		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.getClientes()), HttpStatus.OK);
+		return new ResponseEntity<Respuesta>(new Respuesta("200"), HttpStatus.OK);
 	}
 
 	@Override
@@ -70,8 +68,8 @@ public class MovimientosApiController implements MovimientosApi {
 	}
 	
 	@Override
-	public ResponseEntity<Movimientos> postByFecha(@RequestBody MovimientosByFecha fecha) {
-		return new ResponseEntity<Movimientos>(repository.consultaFecha(fecha), HttpStatus.OK);
+	public ResponseEntity<RespuestaConsulta> postByFecha(@RequestBody MovimientosByFecha fecha) {
+		return new ResponseEntity<RespuestaConsulta>(new RespuestaConsulta(repository.consultaFecha(fecha)), HttpStatus.OK);
 	}
 
 }
