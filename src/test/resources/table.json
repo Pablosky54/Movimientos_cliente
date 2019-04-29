@@ -1,0 +1,59 @@
+{
+    "Table": {
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "IdMovimiento",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "Fecha",
+                "AttributeType": "S"
+            }
+        ],
+        "TableName": "Movimientos",
+        "KeySchema": [
+            {
+                "AttributeName": "IdMovimiento",
+                "KeyType": "HASH"
+            }
+        ],
+        "TableStatus": "ACTIVE",
+        "CreationDateTime": 1556303133.099,
+        "ProvisionedThroughput": {
+            "LastIncreaseDateTime": 0.0,
+            "LastDecreaseDateTime": 0.0,
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        },
+        "TableSizeBytes": 801,
+        "ItemCount": 6,
+        "TableArn": "arn:aws:dynamodb:ddblocal:000000000000:table/Movimientos",
+        "BillingModeSummary": {
+            "BillingMode": "PROVISIONED",
+            "LastUpdateToPayPerRequestDateTime": 0.0
+        },
+        "GlobalSecondaryIndexes": [
+            {
+                "IndexName": "Fecha-index",
+                "KeySchema": [
+                    {
+                        "AttributeName": "Fecha",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "Projection": {
+                    "ProjectionType": "ALL"
+                },
+                "IndexStatus": "ACTIVE",
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                },
+                "IndexSizeBytes": 709,
+                "ItemCount": 5,
+                "IndexArn": "arn:aws:dynamodb:ddblocal:000000000000:table/Movimientos/index/Fecha-index"
+            }
+        ]
+    }
+}
