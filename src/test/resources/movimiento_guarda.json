@@ -1,7 +1,7 @@
 {
-            "producto": "MASTERCARD GOLD PLUS",
-            "valor": 100000,
-            "tipoId": "CC",
-            "idCliente": "1098367544"
-           
-}
+            
+            "producto": "PLATINO",
+            "valor": 1500,
+            "tipoId": "PP",
+            "idCliente": "123"
+       }

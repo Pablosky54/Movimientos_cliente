@@ -144,8 +144,6 @@ public class MovimientosRepository {
 
 		Table table = dynamoDB.getTable("Movimientos");
 
-		// String id = "000ecc62-f2d9-4b87-94b3-a4c65e698bbe";
-
 		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", clienteact.getId())
 				.withUpdateExpression("set Productos = :p, TipoId=:t,IdCliente=:c")
 				.withValueMap(new ValueMap().withString(":p", clienteact.getProducto())
