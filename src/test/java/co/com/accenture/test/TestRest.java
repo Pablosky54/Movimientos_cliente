@@ -1,7 +1,9 @@
 package co.com.accenture.test;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.InputStream;
@@ -33,9 +35,12 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
@@ -46,6 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.com.accenture.RunApplication;
 import co.com.accenture.model.Movimientos;
+import co.com.accenture.model.MovimientosById;
 
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -223,7 +229,7 @@ public class TestRest {
 	 * status().isOk());
 	 * 
 	 * }
-	 */
+	 
 
 	@Test
 	public void actualizar() throws Exception {
@@ -236,19 +242,64 @@ public class TestRest {
 				.withValueMap(new ValueMap().withString(":p", json.getProducto()).withString(":t", json.getTipoId())
 						.withString(":c", json.getIdCliente()))
 				.withReturnValues(ReturnValue.UPDATED_NEW);
-		Table table = dynamoDb;
 				dynamoDb.updateItem(updateItemSpec);
 
 		Mockito.doAnswer(new Answer<Void>() {
 			public Void answer(InvocationOnMock invocation) {
 				return null;
 			}
-		}).when(table).updateItem(updateItemSpec);
+		}).when(dynamoDb).updateItem(updateItemSpec);
 
-		mockMvc.perform(post("/movimientos/actualizar").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(put("/movimientos/actualizar").contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(asJsonString(json))).andExpect(status().isOk());
+
+	}*/
+	
+	@Test
+	public void consultar() throws Exception {
+
+		final InputStream file = getClass().getClassLoader().getResourceAsStream("id.json");
+		MovimientosById json = objectMapper.readValue(file, MovimientosById.class);
+
+		Map<String, Condition> keyConditions = new HashMap<>();
+		keyConditions.put("IdMovimiento", new Condition().withAttributeValueList(new AttributeValue(json.getId()))
+				.withComparisonOperator(ComparisonOperator.EQ));
+
+		QueryRequest queryRequest = new QueryRequest().withConsistentRead(true)
+				.withKeyConditions(keyConditions);
+
+		Mockito.doAnswer(new Answer<Void>() {
+			public Void answer(InvocationOnMock invocation) {
+				return null;
+			}
+		}).when(client).query(queryRequest);
+
+		mockMvc.perform(post("/movimientos/consultar").contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON).content(asJsonString(json))).andExpect(status().isOk());
 
 	}
+	
+	@Test
+	public void elimina() throws Exception {
+
+		final InputStream file = getClass().getClassLoader().getResourceAsStream("id.json");
+		MovimientosById json = objectMapper.readValue(file, MovimientosById.class);
+
+		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", json.getId());
+		DeleteItemSpec deleteSpec = new DeleteItemSpec().withPrimaryKey("IdMovimiento", json.getId());
+		
+		
+		Mockito.doAnswer(new Answer<Void>() {
+			public Void answer(InvocationOnMock invocation) {
+				return null;
+			}
+		}).when(dynamoDb).deleteItem(deleteSpec);
+
+		mockMvc.perform(delete("/movimientos/eliminar").contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(asJsonString(json))).andExpect(status().isOk());
+
+	}
+
 
 	static String asJsonString(final Object obj) {
 		try {
