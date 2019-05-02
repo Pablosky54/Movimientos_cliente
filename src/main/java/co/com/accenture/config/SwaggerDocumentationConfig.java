@@ -19,7 +19,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Configuration
 public class SwaggerDocumentationConfig {
-
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
             .title("Swagger PFM")
@@ -57,5 +56,4 @@ public class SwaggerDocumentationConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
 }

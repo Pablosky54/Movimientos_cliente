@@ -1,7 +1,7 @@
 {
             
-            "producto": "PLATINO",
-            "valor": 1500,
-            "tipoId": "PP",
-            "idCliente": "123"
+            "product": "PLATINO",
+            "value": 1500,
+            "typeId": "PP",
+            "idClient": "123"
        }

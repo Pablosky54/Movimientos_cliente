@@ -7,32 +7,26 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 @DynamoDBTable(tableName = "Movimientos")
-public class MovimientosByFecha {
+public class MovementsByDate {
 
 	@DynamoDBAttribute(attributeName = "Fecha")
-	private String fecha;	
+	private String date;
 
-	public MovimientosByFecha(Map<String, AttributeValue> item) {
-		this.fecha = item.get("Fecha") == null ? null : item.get("Fecha").getS();
-		
+	public MovementsByDate(Map<String, AttributeValue> item) {
+		this.date = item.get("Fecha") == null ? null : item.get("Fecha").getS();
 	}
 
-
-	public String getFecha() {
-		return fecha;
+	public String getDate() {
+		return date;
 	}
 
-
-	public void setFecha(String fecha) {
-		this.fecha = fecha;
+	public void setFecha(String date) {
+		this.date = date;
 	}
 
-
-	public MovimientosByFecha() {
+	public MovementsByDate() {
 		super();
-		
+
 	}
 
-	
-	
 }

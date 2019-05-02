@@ -27,140 +27,109 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 
-import co.com.accenture.model.Movimientos;
-import co.com.accenture.model.MovimientosByFecha;
-import co.com.accenture.model.MovimientosById;
+import co.com.accenture.model.Movements;
+import co.com.accenture.model.MovementsByDate;
+import co.com.accenture.model.MovementsById;
 
 @Repository
-public class MovimientosRepository {
+public class MovementsRepository {
 
 	private final DynamoDBMapperConfig configs = new DynamoDBMapperConfig.Builder()
 			.withTableNameOverride(TableNameOverride.withTableNameReplacement("Movimientos")).build();
-
 	private AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
 			.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8081", "us-east-1"))
 			.build();
 	private DynamoDBMapper mapper = new DynamoDBMapper(client, configs);
 
-	public void save(Movimientos cliente) {
-
-		mapper.save(cliente);
-
+	public void save(Movements movements) {
+		mapper.save(movements);
 	}
 
-	public List<Movimientos> getClientes() {
+	public List<Movements> getMovements() {
 		ScanRequest request = new ScanRequest("Movimientos");
-		return getClientes(client.scan(request).getItems());
+		return getMovements(client.scan(request).getItems());
 	}
 
-	public List<Movimientos> getClientes(List<Map<String, AttributeValue>> items) {
-		List<Movimientos> logs = new ArrayList<>();
-
+	public List<Movements> getMovements(List<Map<String, AttributeValue>> items) {
+		List<Movements> logs = new ArrayList<>();
 		if (!items.isEmpty()) {
-
 			for (Map<String, AttributeValue> item : items) {
-				Movimientos log = new Movimientos(item);
-
+				Movements log = new Movements(item);
 				logs.add(log);
 			}
 		}
-
 		return logs;
 	}
 
-	public Movimientos consulta(MovimientosById clienteId) {
-
+	public Movements search(MovementsById movementsId) {
 		Map<String, Condition> keyConditions = new HashMap<>();
-		keyConditions.put("IdMovimiento", new Condition().withAttributeValueList(new AttributeValue(clienteId.getId()))
-				.withComparisonOperator(ComparisonOperator.EQ));
-
+		keyConditions.put("IdMovimiento",
+				new Condition().withAttributeValueList(new AttributeValue(movementsId.getId()))
+						.withComparisonOperator(ComparisonOperator.EQ));
 		QueryRequest request = new QueryRequest("Movimientos").withConsistentRead(true)
 				.withKeyConditions(keyConditions);
-
 		QueryResult result = client.query(request);
-		List<Movimientos> list = getClientes(result.getItems());
-
+		List<Movements> list = getMovements(result.getItems());
 		System.out.println(result.getItems().toString());
 		if (list.isEmpty()) {
 			return null;
 		} else {
 			return list.get(0);
-
 		}
-
 	}
 
-	public List<Movimientos> consultaFecha(MovimientosByFecha clienteFecha) {
-
+	public List<Movements> searchDate(MovementsByDate movementsDate) {
 		List<Map<String, AttributeValue>> items = new ArrayList<>();
 		Map<String, String> expressionAttributesNames = new HashMap<>();
-
 		expressionAttributesNames.put("#Fecha", "Fecha");
 		Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-
-		expressionAttributeValues.put(":Fecha", new AttributeValue().withS(clienteFecha.getFecha()));
+		expressionAttributeValues.put(":Fecha", new AttributeValue().withS(movementsDate.getDate()));
 		QueryRequest queryRequest = new QueryRequest().withTableName("Movimientos")
 				.withKeyConditionExpression("#Fecha = :Fecha ").withIndexName("Fecha-index")
 				.withExpressionAttributeNames(expressionAttributesNames)
 				.withExpressionAttributeValues(expressionAttributeValues);
 		QueryResult queryResult = client.query(queryRequest);
-		List<Movimientos> list = getClientes(queryResult.getItems());
-
+		List<Movements> list = getMovements(queryResult.getItems());
 		System.out.println(queryResult.getItems().toString());
-
 		if (list.isEmpty()) {
 			return null;
 		} else {
-
 			return list;
-
 		}
-
 	}
 
-	public void elimina(MovimientosById clientedel) {
+	public void delete(MovementsById movementsDelete) {
 		DynamoDB dynamoDB = new DynamoDB(client);
-
 		Table table = dynamoDB.getTable("Movimientos");
-
-		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", clientedel.getId());
-
+		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", movementsDelete.getId());
 		try {
 			System.out.println("Updating the item...");
 			UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
-			DeleteItemSpec deleteSpec = new DeleteItemSpec().withPrimaryKey("IdMovimiento", clientedel.getId());
+			DeleteItemSpec deleteSpec = new DeleteItemSpec().withPrimaryKey("IdMovimiento", movementsDelete.getId());
 			AttributeValue item = new AttributeValue();
-			table.deleteItem(deleteSpec).getDeleteItemResult().addAttributesEntry(clientedel.getId(), item);
+			table.deleteItem(deleteSpec).getDeleteItemResult().addAttributesEntry(movementsDelete.getId(), item);
 			System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
-
 		} catch (Exception e) {
-			System.err.println("Unable to update item: " + clientedel.getId() + " ");
+			System.err.println("Unable to update item: " + movementsDelete.getId() + " ");
 			System.err.println(e.getMessage());
 		}
 	}
 
-	public void actualizar(Movimientos clienteact) {
+	public void update(Movements movementsUpdate) {
 		DynamoDB dynamoDB = new DynamoDB(client);
-
 		Table table = dynamoDB.getTable("Movimientos");
-
-		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", clienteact.getId())
+		UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("IdMovimiento", movementsUpdate.getId())
 				.withUpdateExpression("set Productos = :p, TipoId=:t,IdCliente=:c")
-				.withValueMap(new ValueMap().withString(":p", clienteact.getProducto())
-						.withString(":t", clienteact.getTipoId()).withString(":c", clienteact.getIdCliente()))
+				.withValueMap(new ValueMap().withString(":p", movementsUpdate.getProduct())
+						.withString(":t", movementsUpdate.getTypeId()).withString(":c", movementsUpdate.getIdClient()))
 				.withReturnValues(ReturnValue.UPDATED_NEW);
-
 		try {
 			System.out.println("Updating the item...");
 			UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
-
 			System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
-
 		} catch (Exception e) {
-			System.err.println("Unable to update item: " + clienteact.getId() + " ");
+			System.err.println("Unable to update item: " + movementsUpdate.getId() + " ");
 			System.err.println(e.getMessage());
 		}
-
 	}
-
 }
